@@ -4,6 +4,8 @@ const employeesRouter = express.Router();
 const sqlite3 = require('sqlite3');
 const db = new sqlite3.Database(process.env.TEST_DATABASE || './database.sqlite');
 
+const timesheetsRouter = require('./timesheets.js');
+
 const validateEmployee = (req, res, next) => {
   const newEmployee = req.body.employee;
   newEmployee.isCurrentEmployee = (newEmployee.isCurrentEmployee === 0) ? 0 : 1;
@@ -29,6 +31,8 @@ employeesRouter.param('employeeId', (req, res, next, employeeId) => {
     }
   });
 });
+
+employeesRouter.use('/:employeeId/timesheets', timesheetsRouter);
 
 employeesRouter.get('/', (req, res, next) => {
   db.all('SELECT * FROM Employee WHERE is_current_employee = 1', 
